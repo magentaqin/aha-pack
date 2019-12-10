@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const parser = require('@babel/parser')
 const traverse = require('@babel/traverse').default;
-const { transformFromAst } = require('@babel/core')
+const { transformFromAstSync } = require('@babel/core')
 
 
 let ID = 0;
@@ -11,7 +11,6 @@ const createAsset = (filename) => {
   const content = fs.readFileSync(filename, 'utf-8');
 
   const ast = parser.parse(content, { sourceType: 'module'})
-  console.log('ast', ast)
 
   const dependencies = []
   traverse(ast, {
@@ -20,8 +19,9 @@ const createAsset = (filename) => {
     }
   });
 
+
   const id = ID++;
-  const { code } = transformFromAst(ast, null, {
+  const { code } = transformFromAstSync(ast, null, {
     presets: ["@babel/preset-env",]
   })
 
@@ -80,7 +80,7 @@ const bundle = (graph) => {
   return result;
 }
 
-const graph = createGraph(path.resolve(__dirname, './example/entry.js'));
-const result = bundle(graph);
+// const graph = createGraph(path.resolve(__dirname, './example/entry.js'));
+// const result = bundle(graph);
 
-console.log(result);
+// console.log(result);
