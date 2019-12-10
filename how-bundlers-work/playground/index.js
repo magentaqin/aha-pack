@@ -36,7 +36,6 @@ const createAsset = (filename) => {
 const createGraph = (entry) => {
   const mainAsset = createAsset(entry)
   const queue = [mainAsset]
-
   for (const asset of queue) {
     asset.mapping = {};
     const dirname = path.dirname(asset.filename);
@@ -80,7 +79,7 @@ const bundle = (graph) => {
   return result;
 }
 
-// const graph = createGraph(path.resolve(__dirname, './example/entry.js'));
+const graph = createGraph(path.resolve(__dirname, './example/entry.js'));
 // const result = bundle(graph);
 
 // console.log(result);

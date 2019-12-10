@@ -72,6 +72,46 @@ console.log(_message["default"]);
  * import message from './message.js'; console.log(message)
 ```
 
+* STEP TWO: Create Dependency Graph. (Briefly, recursively call STEP ONE)
+Variable `queue` holds the total dependencies of the application.
+1) Initially, it has entry asset.
+```javascript
+const queue = [mainAsset]
+```
+
+2) Recursively extract dependencies.
+> First loop: entry.js has dependencies `[message.js]`. So extract dependencies of message.js.
+> Second loop: message.js has dependencies `[name.js]`. So extract depencies of name.js
+> Third loop: name.js has dependencies `[]`. Nothing to extract.
+
+In the end, the queue is :
+```javascript
+[
+  {
+    id: 0,
+    filename: 'entry.js',
+    dependencies: ['./message.js'].
+    code: 'balabala',
+    mapping: {'./message.js': 1}
+  },
+  {
+    id: 1,
+    filename: 'message.js',
+    dependencies: ['./name.js'].
+    code: 'balabala',
+    mapping: {'./name.js': 2}
+  },
+  {
+    id: 2,
+    filename: 'name.js',
+    dependencies: [].
+    code: 'balabala',
+    mapping: {}
+  }
+]
+```
+
+
 https://github.com/webpack/webpack/tree/master/examples
 https://github.com/ronami/minipack
 https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md
