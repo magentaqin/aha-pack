@@ -52,15 +52,20 @@ const createGraph = (entry) => {
 const bundle = (graph) => {
   let modules = '';
   graph.forEach(mod => {
-    modules += `${mod.id}: [
-      function(require, module, exports) {
-        ${mod.code}
-      },
-      ${JSON.stringify(mod.mapping)},
-    ]`
+    modules += `
+      ${mod.id}: [
+                  function(require, module, exports) {
+                    ${mod.code}
+                  },
+                  ${JSON.stringify(mod.mapping)},
+                ],`  // , must be provided
   });
+  const moduleObj = `{
+    ${modules}
+  }`
+
   const result = `
-    (function(modules){
+    (function(modules) {
       function require(id) {
         const [fn, mapping] = modules[id];
 
@@ -68,18 +73,20 @@ const bundle = (graph) => {
           return require(mapping[name]);
         }
 
-        const module = { exports: {}};
+        const module = { exports : {} };
 
         fn(localRequire, module, module.exports);
         return module.exports;
       }
+
       require(0);
-    })({${modules}})
+    })(${moduleObj})
   `;
   return result;
 }
 
 const graph = createGraph(path.resolve(__dirname, './example/entry.js'));
-// const result = bundle(graph);
-
-// console.log(result);
+const result = bundle(graph);
+const resultFile = fs.createWriteStream(path.resolve(__dirname, './output.js'));
+resultFile.write(result);
+resultFile.end()
