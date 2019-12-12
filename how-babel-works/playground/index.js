@@ -18,13 +18,23 @@ const transform = (filename) => {
 
   const ast = parser.parse(content)
 
+  const MyVisitor = {
+    Identifier: {
+      enter(node) {
+        console.log('node entered', node.node.type, node.node.name)
+      },
+      exit(node){
+        console.log('node exited', node.node.name)
+      }
+    },
+  }
+
   const traverseResult = traverse(ast, {
     FunctionDeclaration: function(path) {
-      console.log(path.node)
-      path.node.id.name = "x";
+      // console.log(path.node)
+      path.traverse(MyVisitor)
     }
-})
-  console.log(traverseResult)
+  });
 }
 
 transform(filename)
