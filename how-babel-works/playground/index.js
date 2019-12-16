@@ -4,14 +4,13 @@ const parser = require('@babel/parser')
 const traverse = require('@babel/traverse').default;
 const t = require('@babel/types')
 const generate = require('@babel/generator').default;
-const template = require('@babel/template').default
 
 const inputFileContent = fs.readFileSync(path.resolve(__dirname, './input.js'), 'utf-8')
 const ast = parser.parse(inputFileContent)
 
 
 let spreadObjectName = '';
-let spreadNode = {};
+let spreadNodes = [];
 
 const spreadElementVisitor = {
   SpreadElement(path) {
@@ -36,21 +35,27 @@ const visitor = {
 const spreadVisitor = {
   VariableDeclarator(path) {
     if (path.node.id.name === spreadObjectName) {
-      spreadNode = path.node.init.properties[0];
+      spreadNodes = path.node.init.properties;
     }
   }
 }
 
 const updateObjVisitor = {
   VariableDeclarator(path) {
-    const updatedProperties = []
-    path.node.init.properties.forEach(item => {
-      if (item.type === 'SpreadElement' && item.argument.name === spreadObjectName) {
-        item = spreadNode;
-      }
-      updatedProperties.push(item);
-    })
-    path.node.init.properties = updatedProperties;
+    const updatedProperties = {}
+    if (path.node && path.node.init && path.node.init.properties) {
+      path.node.init.properties.forEach(item => {
+        console.log(item.type)
+        if (item.type === 'SpreadElement' && item.argument.name === spreadObjectName) {
+          spreadNodes.forEach(spreadNode => updatedProperties[spreadNode.key.name] = spreadNode)
+          return;
+        }
+        console.log(item.key.name)
+        updatedProperties[item.key.name] = item;
+      })
+      // console.log(Object.keys(updatedProperties))
+      path.node.init.properties = Object.values(updatedProperties);
+    }
   }
 }
 
@@ -69,7 +74,7 @@ if (spreadObjectName) {
   })
 }
 
-if (Object.keys(spreadNode).length) {
+if (spreadNodes.length) {
   traverse(ast, {
     VariableDeclaration: function(path) {
       path.traverse(updateObjVisitor)
