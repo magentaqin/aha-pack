@@ -119,7 +119,7 @@ The node has propeties: `id`, `params` and `body`. Take a look at the `body` pro
   }
 }
 ```
-b) Tranverse process
+b) Traverse nodes
 The node above has this tree structure:
 ```javascript
 - FunctionDeclaration
@@ -132,20 +132,21 @@ The node above has this tree structure:
         - Identifier (right)
 ```
 There are mainly 4 nodes (whose type is tagged as `Identifier`). To enter next node, we have to exit current node. Use a `visitor` to track the `enter` and `exit` process.
+Notice the `path` param. It is a reactive object representation of the link between two nodes.
 ```javascript
-const MyVisitor = {
+  const NodeVisitor = {
     Identifier: {
-      enter(node) {
-        console.log('node entered', node.node.type, node.node.name)
+      enter(path) {
+        console.log('node entered', path.node.type, path.node.name)
       },
-      exit(node){
-        console.log('node exited', node.node.name)
+      exit(path){
+        console.log('node exited', path.node.name)
       }
     },
   }
- const traverseResult = traverse(ast, {
+ traverse(ast, {
     FunctionDeclaration: function(path) {
-      path.traverse(MyVisitor)
+      path.traverse(NodeVisitor)
     }
 });
 ```
@@ -161,7 +162,91 @@ node entered Identifier n
 node exited n
 ```
 
-* Stage 3 => generate(turn the transformed AST to a string of code.)
 
+c) binding
+References all belong to a scope. The relationship between references and scope is called binding.
+```javascript
+const scopeFile = path.resolve(__dirname, './scope.js')
+const getPathScope = (filename) => {
+  const content = fs.readFileSync(filename, 'utf-8');
+
+  const ast = parser.parse(content)
+  traverse(ast, {
+    FunctionDeclaration: function(path) {
+      console.log(path.scope.bindings)
+    }
+  });
+}
+getPathScope(scopeFile)
+```
+
+Have a look at `ref1`'s and `ref2`'s binding. This binding information tells us if it is a constant(`constant` boolean value), its scope(`scope` property), whether it has been referenced and its referencing info.
+```javascript
+// ref1;
+{
+  identifier: node,
+  scope: scope,
+  path: path,
+  kind: 'const',
+  referenced: true,
+  references: 1,
+  referencePaths: [path],
+  constant: true,
+}
+
+// ref2
+{
+  identifier: node,
+  scope: scope,
+  path: path,
+  kind: 'let',
+  referenced: false,
+  references: 0,
+  referencePaths: [],
+  constant: false,
+}
+```
+
+d) @babel/types => build/validate AST nodes
+The definition of `BinaryExpress` type is:
+```javascript
+defineType("BinaryExpression", {
+  builder: ["operator", "left", "right"],
+  fields: {
+    operator: {
+      validate: assertValueType("string")
+    },
+    left: {
+      validate: assertNodeType("Expression")
+    },
+    right: {
+      validate: assertNodeType("Expression")
+    }
+  },
+  visitor: ["left", "right"],
+  aliases: ["Binary", "Expression"]
+});
+```
+Each node type has a builder method. You can use this builder method to buld node.
+```javascript
+const binaryExpressionNode = t.binaryExpression('*', t.identifier('a'), t.identifier('b'))
+console.log(binaryExpressionNode)
+/**
+ * {
+  type: 'BinaryExpression',
+  left: {
+    type: 'Identifier',
+    name: 'a',
+  },
+  operator: '*',
+  right: {
+    type: 'Identifier',
+    name: 'b',
+  }
+}
+```
+
+* Stage 3 => generate(turn the transformed AST to a string of code.)
+a) babel-generator
 
 https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md
