@@ -1,7 +1,19 @@
 # How Babel works
-Babel is a JS compiler. It is used for compiling, linting, minification and so on. (forms of static analysis).
+Babel is a JS compiler which transpiles new features(ES6, ES7, ES8) into old standard(ES5) which runs across browsers.
 
-#### Stages of babel
+Before digging into the working process of babel, let me ask you these questions:
+
+- Babel manages the two parts: transpiling and polyfilling. What's the difference between `babel-transpiler` and `babel-polyfill` ?
+https://www.tutorialspoint.com/babeljs/babeljs_overview.htm
+https://tylermcginnis.com/compiling-polyfills/
+
+- List core features of Babel.
+
+- Except compiling, what can babel do for you?
+
+It is used for compiling, linting, minification and so on. (forms of static analysis).
+
+### Stages of babel
 * Stage 1 => parse:
 1) lexical analysis: turn code into a stream of tokens
 Take `square.js` for example:
