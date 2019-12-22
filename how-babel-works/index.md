@@ -345,3 +345,5 @@ function scopeOne() {
 
 
 https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md
+
+https://babeljs.io/docs/en/babel-plugin-transform-spread
