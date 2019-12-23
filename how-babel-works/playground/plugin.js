@@ -99,6 +99,7 @@ const visitor = {
 
   CallExpression(path) {
     const { node, scope } = path;
+    console.log(path.node)
 
     const args = node.arguments;
     if (!hasSpread(args)) return;

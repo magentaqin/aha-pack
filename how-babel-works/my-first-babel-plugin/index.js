@@ -15,12 +15,27 @@ const visitor = {
   ArrayExpression(path) {
     const { node, scope } = path;
     const elements = node.elements;
-    // console.log(node.elements)
     if (!hasSpread(elements)) return;
 
-    // turn SpreadElement type to Identifier type.
+    // turn SpreadElement type to Identifier type, and put rest elements to an array.
     const nodes = build(elements, scope);
-    console.log(nodes[0])
+    let first = nodes[0];
+
+    if (!t.isArrayExpression(first)) {
+      first = t.arrayExpression([]);
+    } else {
+      nodes.shift();
+    }
+
+    path.replaceWith(
+      t.callExpression(
+        t.memberExpression(first, t.identifier("concat")),
+        nodes,
+      )
+    )
+  },
+
+  CallExpression(path) {
   }
 }
 
