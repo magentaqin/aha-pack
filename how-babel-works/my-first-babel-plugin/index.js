@@ -17,7 +17,37 @@ const visitor = {
     const elements = node.elements;
     if (!hasSpread(elements)) return;
 
-    // turn SpreadElement type to Identifier type, and put rest elements to an array.
+    /**
+     * Turn SpreadElement type to Identifier type, and put rest elements to an array.
+     *
+     * Before building, it looks like:
+     * [{
+     *   type: 'SpreadElement',
+     *   argument: {
+     *     type: 'Identifier',
+     *     name: 'arr1',
+     *   }
+     * },
+     * {
+     *   type: 'NumericLiteral',
+     *   value: 3,
+     * }]
+     *
+     *
+     * After building, it looks like:
+     * [
+     *   {
+     *     type: 'Identifier',
+     *     name: 'arr1'
+     *   },
+     *  {
+     *     type: 'ArrayExpression',
+     *     elements: [{ type: 'NumericLiteral', value: 3}]
+     *   }
+     * ]
+     *
+     *
+     */
     const nodes = build(elements, scope);
     let first = nodes[0];
 
@@ -34,9 +64,6 @@ const visitor = {
       )
     )
   },
-
-  CallExpression(path) {
-  }
 }
 
 // STEP2: traverse AST and let visitor transform AST.
@@ -47,7 +74,7 @@ traverse(ast, {
 })
 
 // SETP3: turn the transformed AST to code and write it to output.js
-// const result = generate(ast);
-// const resultFile = fs.createWriteStream(path.resolve(__dirname, './output.js'));
-// resultFile.write(result.code);
-// resultFile.end();
+const result = generate(ast);
+const resultFile = fs.createWriteStream(path.resolve(__dirname, './output.js'));
+resultFile.write(result.code);
+resultFile.end();
