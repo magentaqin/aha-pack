@@ -13,14 +13,18 @@ Each section has a directory called `playground`.
 
 You can run these playgrounds to have a better unstanding how them work under the hood.
 
-- [How bundlers work?](https://github.com/magentaqin/aha-pack/blob/master/how-bundlers-work/index.md)
+#### [1. How bundlers work?](https://github.com/magentaqin/aha-pack/blob/master/how-bundlers-work/index.md)
 
 
-- [How babel works?](https://github.com/magentaqin/aha-pack/blob/master/how-babel-works/index.md)
+#### [2. How babel works?](https://github.com/magentaqin/aha-pack/blob/master/how-babel-works/index.md)
 
 This blog is inspired by official [Babel Plugin Handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md) and [@babel/plugin-transform-spread](https://babeljs.io/docs/en/babel-plugin-transform-spread).
 
 Mainly, it talks about stages of babel and teaches you to build a simplified spread operator babel plugin.
+
+Head on to the playground code: [src/how-babel-works/playground](https://github.com/magentaqin/aha-pack/blob/master/how-babel-works/playground/index.js)
+
+Head on to the spread operator babel plugin: [src/how-babel-works/my-first-babel-plugin](https://github.com/magentaqin/aha-pack/blob/master/how-babel-works/my-first-babel-plugin/index.js)
 
 The self-made babel plugin takes input:
 ```javascript
