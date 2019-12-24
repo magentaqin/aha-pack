@@ -14,10 +14,10 @@ const filename = path.resolve(__dirname, './square.js')
 const lexicalAnalysis = (filename) => {
   const content = fs.readFileSync(filename, 'utf-8');
   const parseResult = parser.parse(content, { tokens: true })
-  console.log('stream of tokens', parseResult.tokens)
+  console.log('Lexical Analysis: stream of tokens', parseResult.tokens)
 }
 
-// lexicalAnalysis(filename)
+lexicalAnalysis(filename)
 
 
 /**
@@ -43,13 +43,14 @@ const traverseNodes = (filename) => {
 
   traverse(ast, {
     FunctionDeclaration: function(path) {
+      console.log('Traverse Nodes')
       console.log(path.node)
       path.traverse(NodeVisitor)
     }
   });
 }
 
-// traverseNodes(filename)
+traverseNodes(filename)
 
 
 
@@ -63,11 +64,12 @@ const getPathScope = (filename) => {
   const ast = parser.parse(content)
   traverse(ast, {
     FunctionDeclaration: function(path) {
+      console.log('Get Path Scope')
       console.log(path.scope.bindings)
     }
   });
 }
-// getPathScope(scopeFile)
+getPathScope(scopeFile)
 
 
 
@@ -75,8 +77,7 @@ const getPathScope = (filename) => {
  * buid node
  */
 const binaryExpressionNode = t.binaryExpression('*', t.identifier('a'), t.identifier('b'))
-// console.log(binaryExpressionNode)
-
+console.log('Build Node:', binaryExpressionNode)
 
 
 /**
@@ -95,7 +96,7 @@ const testNode = {
   }
 }
 const validateResult = t.isBinaryExpression(testNode)
-// console.log(validateResult)
+console.log('Validate Node', validateResult)
 
 /**
  * transform AST to code with sourcemaps
@@ -112,8 +113,6 @@ const { code, map } = generate(ast, { sourceMaps: true }, {
   'square.js': squareFileContent,
   'scope.js': scopeFileContent,
 })
-// console.log('code', code)
-// console.log('map', map)
 
 /**
  * @babel/template
@@ -125,7 +124,7 @@ const templateAST = buildRequire({
   importName: t.identifier('myModule'),
   source: t.stringLiteral('my-module')
 })
-console.log(templateAST)
+console.log('Template AST', templateAST)
 
 const templateOutput = generate(templateAST);
-console.log(templateOutput.code)
+console.log('Final Output', templateOutput.code)

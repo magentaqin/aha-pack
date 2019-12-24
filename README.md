@@ -9,9 +9,27 @@ For a long time, tools like `webpack` and `babel` are like black boxes to me. I 
 I believe you can find your aha-moment after reading and re-enginnering the following sections.
 
 ### Sections
+Each section has a directory called `playground`.
 
-- [How bundlers Work?](https://github.com/magentaqin/aha-pack/blob/master/how-bundlers-work/index.md)
+You can run these playgrounds to have a better unstanding how them work under the hood.
 
-- [How babel Works](https://github.com/magentaqin/aha-pack/blob/master/how-babel-works/index.md)
+- [How bundlers work?](https://github.com/magentaqin/aha-pack/blob/master/how-bundlers-work/index.md)
 
+
+- [How babel works?](https://github.com/magentaqin/aha-pack/blob/master/how-babel-works/index.md)
+
+This blog is inspired by official [Babel Plugin Handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md) and [@babel/plugin-transform-spread](https://babeljs.io/docs/en/babel-plugin-transform-spread).
+
+Mainly, it talks about stages of babel and teaches you to build a simplified spread operator babel plugin.
+
+The self-made babel plugin takes input:
+```javascript
+const arr1 = [1, 2]
+const arr2 = [...arr1, 3];
+```
+and transforms it to:
+```javascript
+const arr1 = [1, 2];
+const arr2 = [].concat(arr1, [3]);
+```
 

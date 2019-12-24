@@ -1,22 +1,54 @@
 # How Babel works
-Babel is a JS compiler which transpiles new features(ES6, ES7, ES8) into old standard(ES5) which runs across browsers.
+
+> This blog is inspired by official [Babel Plugin Handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md) and [@babel/plugin-transform-spread](https://babeljs.io/docs/en/babel-plugin-transform-spread). 
+>
+> Mainly, it talks about stages of babel and teaches you to build a simplified spread operator babel plugin. 
+
+
+
+Before reading, you can run these two commands to have fun:
+
+```makefile
+# this will show you the stages of babel. You can re-engineer it as you like.
+make babel-playground 
+
+# transform code that has spread operator syntax to old standard syntax.
+make my-first-babel-plugin
+```
+
+
+
+Babel is a JS compiler which transpiles new features(ES6, ES7, ES8) into old standard browser compatible syntax(ES5).
 
 Before digging into the working process of babel, let me ask you these questions:
 
-- Babel manages the two parts: transpiling and polyfilling. What's the difference between `babel-transpiler` and `babel-polyfill` ?
-https://www.tutorialspoint.com/babeljs/babeljs_overview.htm
-https://tylermcginnis.com/compiling-polyfills/
+* Babel manages the two parts: transpiling and polyfilling. What's the difference between `babel-transpiler` and `babel-polyfill` ?
 
-- List core features of Babel.
+  > **transpiling **:  transform new syntax to old syntax. e.g.arrow functions, classes and destructuring
+  >
+  > **polyfilling** : add new properties to the browser's global namespace. e.g. Promise, Symbol, and Set
+
+- What's the difference between `babel-plugins` and `babel-presets`?
+
+  > plugins run before presets. 
+  >
+  > plugin ordering is first to last, while preset ordering is last to first.
 
 - Except compiling, what can babel do for you?
 
-It is used for compiling, linting, minification and so on. (forms of static analysis).
+  > Linting, and minification.
 
-### Stages of babel
-* Stage 1 => parse:
-1) lexical analysis: turn code into a stream of tokens
+
+
+## Stages of babel
+
+#### Stage One: parse
+
+There are two phases of parsing in babel: lexical analysis and syntactic analysis.
+
+**1) lexical analysis: turn code into a stream of tokens**
 Take `square.js` for example:
+
 ```javascript
 const lexicalAnalysis = (filename) => {
   const content = fs.readFileSync(filename, 'utf-8');
@@ -43,7 +75,8 @@ The parsedResult has a property named `tokens`:
   ...
 ]
 ```
-Print ths `TokenType`:
+`TokenType` looks like:
+
 ```javascript
 TokenType {
   label: 'function',
@@ -86,9 +119,13 @@ Node {
 }
 ```
 
-* Stage 2 => transform(MOST COMPLEX PART. Traverse AST and add/delete/udpate nodes.)
+
+
+#### Stage Two:  transform (MOST COMPLEX PART. Traverse AST and add/delete/udpate nodes.)
+
 **1) Traverse AST**
 a) what does the AST node look like?
+
 ```javascript
 const traverseResult = traverse(ast, {
     FunctionDeclaration: function(path) {
@@ -344,6 +381,6 @@ function scopeOne() {
 ```
 
 
-https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md
 
-https://babeljs.io/docs/en/babel-plugin-transform-spread
+## Build your first plugin
+
